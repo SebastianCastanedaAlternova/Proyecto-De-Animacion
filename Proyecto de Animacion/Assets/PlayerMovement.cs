@@ -4,32 +4,47 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public bool enableMovement;
     public Transform camPivot;
     float heading = 0;
     public Transform cam;
     public Animator anim;
 
     Vector2 input;
+    private void Start()
+    {
+        enableMovement = true;
+    }
     void Update()
 
     {
-        //movement
-        heading += Input.GetAxis("Mouse X") * Time.deltaTime * 180;
-        input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        input = Vector2.ClampMagnitude(input, 1);
+        if (enableMovement)
+        {
+            //movement
+            heading += Input.GetAxis("Mouse X") * Time.deltaTime * 180;
+            input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+            input = Vector2.ClampMagnitude(input, 1);
 
-        Vector3 camF = cam.forward;
-        Vector3 camR = cam.right;
+            Vector3 camF = cam.forward;
+            Vector3 camR = cam.right;
 
-        camF.y = 0;
-        camR.y = 0;
-        camF = camF.normalized;
-        camR = camR.normalized;
-        
-        transform.position += (camF * input.y + camR * input.x) * Time.deltaTime * 5;
+            camF.y = 0;
+            camR.y = 0;
+            camF = camF.normalized;
+            camR = camR.normalized;
 
-        //rotation
-       transform.rotation= Quaternion.LookRotation((camF * input.y + camR * input.x));
+            transform.position += (camF * input.y + camR * input.x) * Time.deltaTime * 5;
+
+            //rotation
+            if(new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).magnitude > 0.1)
+            {
+                transform.rotation = Quaternion.LookRotation((camF * input.y + camR * input.x));
+            }
+           
+
+
+        }
+       
         //animator Control
 
         anim.SetFloat("Magnitude", new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).magnitude);
